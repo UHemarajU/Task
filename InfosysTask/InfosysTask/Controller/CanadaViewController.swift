@@ -21,8 +21,12 @@ class CanadaViewController: UITableViewController, ViewModelDelegate {
        
         
         viewModel.delegate = self
+        
+        
+        //show loader for downloding data
         spinner.startAnimating()
         viewModel.downloadDataFromServer(closure: stopLoadingLoader)// In viewmodel network call login called
+        
         
         
         //Add reload button
@@ -40,6 +44,16 @@ class CanadaViewController: UITableViewController, ViewModelDelegate {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50
         tableView.register(DataCell.self, forCellReuseIdentifier: cellId)
+    }
+    
+    //Title update from view model
+    func updateTitle() {
+        
+        DispatchQueue.main.async {
+            
+            self.title = viewModel.titleForViewController
+        }
+        
     }
     
 
@@ -75,7 +89,10 @@ class CanadaViewController: UITableViewController, ViewModelDelegate {
     // MARK: - UITableView methods
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! DataCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? DataCell else{
+            
+            return  UITableViewCell(style: .default, reuseIdentifier: "Cell")
+        }
         let currentLastItem = viewModel.dataList[indexPath.row]
         cell.data = currentLastItem
         return cell

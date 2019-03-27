@@ -7,6 +7,7 @@
 
 
 protocol ViewModelDelegate: class {
+    func updateTitle()  // Title update
     
     func didFinishUpdates()// update each row
     
@@ -22,6 +23,7 @@ class ViewModel
    
     var dataList : [DataModel]  = [DataModel]()
     weak var delegate: ViewModelDelegate?
+    var titleForViewController : String = ""
     
     func downloadDataFromServer(closure: @escaping () -> ()) {
         
@@ -35,22 +37,36 @@ class ViewModel
                 
             }
             let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-                guard let dataResponse = data,
-                    error == nil else {
+                
+                guard let dataResponse = data, error == nil else {
                         print(error?.localizedDescription ?? "Response Error")
-                        return }
+                        return
+                    
+                }
                 let responseStrInISOLatin = String(data: dataResponse, encoding: String.Encoding.isoLatin1)
-                guard let modifiedDataInUTF8Format = responseStrInISOLatin?.data(using: String.Encoding.utf8) else {
+                guard let modifiedDataInUTF8Format = responseStrInISOLatin?.data(using: String.Encoding.utf8) else
+                {
                     print("could not convert data to UTF-8 format")
                     return
                 }
                 do {
                     if  let responseJSONDict = try JSONSerialization.jsonObject(with: modifiedDataInUTF8Format) as? NSDictionary{
                         
+                        //Title
+                        guard  let viewtitle = responseJSONDict.value(forKey: "title") as? String else{
+                            
+                            return
+                        }
+                        self.titleForViewController = viewtitle
+                        self.delegate?.updateTitle()
+                        
+                        
+                        //Get list of rows
                         guard  let listData = responseJSONDict.value(forKey: "rows") as? NSArray else{
                             
                             return
                         }
+                        
                         
                         for dict in listData  {
                             
