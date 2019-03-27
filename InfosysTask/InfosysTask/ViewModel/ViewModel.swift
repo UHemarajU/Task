@@ -7,7 +7,10 @@
 
 
 protocol ViewModelDelegate: class {
-    func didFinishUpdates()
+    
+    func didFinishUpdates()// update each row
+    
+    func stopLoadingLoader() // stop loader
 }
 
 
@@ -16,12 +19,14 @@ import Foundation
 
 class ViewModel
 {
-    let rowHeight : Float = 100
-    
+   
     var dataList : [DataModel]  = [DataModel]()
     weak var delegate: ViewModelDelegate?
     
-    func donwloadWithUrl(){
+    func downloadDataFromServer(closure: @escaping () -> ()) {
+        
+        
+        dataList.removeAll() // avoid duplicates
         
         DispatchQueue.global().async {
             
@@ -49,59 +54,61 @@ class ViewModel
                         
                         for dict in listData  {
                             
-                            let titlee = dict as! NSDictionary
-                            
-                            let titles = titlee.value(forKey: "title") as? String ?? "na"
-                            let descriptions = titlee.value(forKey: "description") as? String ?? "nil"
-                            
-                            //Check if url string nil or not
-                            if let imageUrl = titlee.value(forKey: "imageHref") as? NSNull {
+                            if let dataList = dict as? NSDictionary{
                                 
-                                print("imageUrl \(imageUrl)")
-                                let img = UIImage(named: "flag_of_canada")  //Place the default image from assets if imageurl not found
-                                self.dataList.append(DataModel(Name: titles, Image: img , Desc: descriptions))
+                                let titles = dataList.value(forKey: "title") as? String ?? "No title available"
+                                let descriptions = dataList.value(forKey: "description") as? String ?? "No Description available" //If no description available in JSON put nil
                                 
-                            }
-                            else
-                            {
-                                let imageUrl = URL(string: (titlee.value(forKey: "imageHref") as! String))
+                                //Check if url string nil or not
                                 
-                                let imgdata = try? Data(contentsOf: imageUrl!)
-                                if imgdata == nil
-                                {
-                                    let img = UIImage(named: "flag_of_canada")//Place the default image from assets if imageurl not found
+                                //SOME OF URL'S PROVIDED IN JSON ARE NOT VALID SO I AM USING DEFAULT IMAGE FROM ASSETS
+                                
+                                if let imageUrl = dataList.value(forKey: "imageHref") as? NSNull {
+                                    
+                                    print("imageUrl \(imageUrl)")
+                                    let img = UIImage(named: "flag_of_canada")  //Place the default image from assets if imageurl not found
                                     self.dataList.append(DataModel(Name: titles, Image: img , Desc: descriptions))
+                                    
                                 }
                                 else
                                 {
-                                    let image = UIImage(data: imgdata!)
-                                    self.dataList.append(DataModel(Name: titles, Image: image , Desc: descriptions))
+                                    if let imageUrl = URL(string: (dataList.value(forKey: "imageHref") as? String ?? "nil")){
+                                        
+                                        let imgdata = try? Data(contentsOf: imageUrl)
+                                        if imgdata == nil
+                                        {
+                                            let img = UIImage(named: "flag_of_canada")//Place the default image from assets if imageurl not found
+                                            self.dataList.append(DataModel(Name: titles, Image: img , Desc: descriptions))
+                                        }
+                                        else
+                                        {
+                                            let image = UIImage(data: imgdata!)
+                                            self.dataList.append(DataModel(Name: titles, Image: image , Desc: descriptions))
+                                        }
+                                    }
+                             
+                                    
                                 }
-                                
-                                
-                                
                             }
                             
                          //Reload tablview in ViewController for each data row
                          self.delegate?.didFinishUpdates()
                             
-                            
                         }
                         
-                        
-                        
-                        
+                         closure() //completionhandler for stop loader
                     }
                     
+                
                     
-                    
-                    
-                } catch {
+                }
+                catch {
+                
                     print(error)
                 }
+                
             }
-            
-            
+           
             task.resume()
         }
         

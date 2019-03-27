@@ -62,6 +62,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C64B6CAA224BB6DD00747BCD /* View */ = {
+			isa = PBXGroup;
+			children = (
+				C678E0E8223FBBAD005E81F6 /* Extension.swift */,
+				C678E0E7223FBBAD005E81F6 /* DataCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		C64B6CAB224BB6E600747BCD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C6D21D95223936740025063C /* DataModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C64B6CAC224BB6F900747BCD /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				C678E0E4223FBB9A005E81F6 /* ViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		C64B6CAD224BB70E00747BCD /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				C6D21D93223934AE0025063C /* CanadaViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
 		C6D21D67223934120025063C = {
 			isa = PBXGroup;
 			children = (
@@ -84,11 +117,10 @@
 			isa = PBXGroup;
 			children = (
 				C6D21D73223934130025063C /* AppDelegate.swift */,
-				C6D21D93223934AE0025063C /* CanadaViewController.swift */,
-				C678E0E4223FBB9A005E81F6 /* ViewModel.swift */,
-				C6D21D95223936740025063C /* DataModel.swift */,
-				C678E0E8223FBBAD005E81F6 /* Extension.swift */,
-				C678E0E7223FBBAD005E81F6 /* DataCell.swift */,
+				C64B6CAA224BB6DD00747BCD /* View */,
+				C64B6CAB224BB6E600747BCD /* Model */,
+				C64B6CAC224BB6F900747BCD /* ViewModel */,
+				C64B6CAD224BB70E00747BCD /* Controller */,
 				C6D21D7A2239341C0025063C /* Assets.xcassets */,
 				C6D21D7C2239341C0025063C /* LaunchScreen.storyboard */,
 				C6D21D7F2239341C0025063C /* Info.plist */,
