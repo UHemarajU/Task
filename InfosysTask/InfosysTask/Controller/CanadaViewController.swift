@@ -12,7 +12,7 @@ let viewModel = ViewModel() //viewmodel instance
 
 class CanadaViewController: UITableViewController, ViewModelDelegate {
    
-    var entries  = [DataModel]()  
+    
     let cellId = "cellId"
     var spinner = UIActivityIndicatorView(style: .gray)
     
